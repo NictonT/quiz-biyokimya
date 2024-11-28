@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        select {
+            padding: 5px;
+            margin: 10px 0;
+            width: 200px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cancer Markers Matching Quiz</h1>
+    <div id="quiz">
+        <div class="question">
+            <p>Match each cancer type with its corresponding marker:</p>
+            <div id="questions"></div>
+        </div>
+        <button onclick="checkAnswers()">Check Answers</button>
+        <button onclick="resetQuiz()">Try Again</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        const pairs = [
+            { cancer: "Ovarian Cancer", marker: "CA 125" },
+            { cancer: "Breast Cancer", marker: "CA 15-3" },
+            { cancer: "Pancreatic Cancer", marker: "CA 19-9" },
+            { cancer: "Prostate Cancer", marker: "PSA/PSP" },
+            { cancer: "Colorectal Cancer", marker: "CEA" },
+            { cancer: "Teratoma", marker: "AFP" },
+            { cancer: "Seminoma", marker: "LDH" },
+            { cancer: "Choriocarcinoma", marker: "beta-hCG" },
+            { cancer: "Small Cell Lung Cancer (SCLC)", marker: "NSE" },
+            { cancer: "Gastrinoma", marker: "Gastrin" }
+        ];
+
+        const markers = pairs.map(p => p.marker);
+
+        function createQuiz() {
+            const questionsDiv = document.getElementById('questions');
+            questionsDiv.innerHTML = '';
+            
+            pairs.forEach((pair, index) => {
+                const questionHTML = `
+                    <div>
+                        <label>${pair.cancer}:</label>
+                        <select id="q${index}">
+                            <option value="">Select marker</option>
+                            ${markers.map(marker => 
+                                `<option value="${marker}">${marker}</option>`
+                            ).join('')}
+                        </select>
+                        <span id="result${index}"></span>
+                    </div>
+                `;
+                questionsDiv.innerHTML += questionHTML;
+            });
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            pairs.forEach((pair, index) => {
+                const select = document.getElementById(`q${index}`);
+                const resultSpan = document.getElementById(`result${index}`);
+                
+                if (select.value === pair.marker) {
+                    correct++;
+                    resultSpan.innerHTML = "✓";
+                    resultSpan.className = "correct";
+                } else {
+                    resultSpan.innerHTML = "✗";
+                    resultSpan.className = "incorrect";
+                }
+            });
+
+            const percentage = (correct / pairs.length) * 100;
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h3>Results:</h3>
+                <p>You got ${correct} out of ${pairs.length} correct (${percentage.toFixed(1)}%)</p>
+                <p>Keep practicing to improve your score!</p>
+            `;
+        }
+
+        function resetQuiz() {
+            createQuiz();
+            document.getElementById('result').style.display = 'none';
+        }
+
+        // Initialize the quiz
+        createQuiz();
+    </script>
+</body>
+</html>
