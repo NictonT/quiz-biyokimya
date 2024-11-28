@@ -3,59 +3,135 @@
 <head>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 800px;
             margin: 20px auto;
             padding: 20px;
+            background-color: #f5f7fa;
+            color: #2d3748;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c5282;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
         }
         .question {
             margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+        }
+        .question-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .question-item:hover {
+            background: #f7fafc;
+        }
+        label {
+            flex: 1;
+            font-weight: 500;
+            margin-right: 15px;
         }
         select {
-            padding: 5px;
-            margin: 10px 0;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1em;
             width: 200px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        select:focus {
+            border-color: #4299e1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 25px;
         }
         button {
-            background: #007bff;
+            background: #4299e1;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 25px;
+            border-radius: 8px;
             cursor: pointer;
-            margin: 10px 0;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
         button:hover {
-            background: #0056b3;
+            background: #2b6cb0;
+            transform: translateY(-1px);
+        }
+        button.reset {
+            background: #718096;
+        }
+        button.reset:hover {
+            background: #4a5568;
         }
         #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
             display: none;
+            background: #ebf8ff;
+            border: 2px solid #bee3f8;
         }
         .correct {
-            color: green;
+            color: #48bb78;
+            margin-left: 10px;
+            font-weight: bold;
         }
         .incorrect {
-            color: red;
+            color: #e53e3e;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        .progress-bar {
+            height: 10px;
+            background: #edf2f7;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #4299e1;
+            transition: width 0.5s ease;
         }
     </style>
 </head>
 <body>
-    <h1>Cancer Markers Matching Quiz</h1>
-    <div id="quiz">
-        <div class="question">
-            <p>Match each cancer type with its corresponding marker:</p>
-            <div id="questions"></div>
+    <div class="container">
+        <h1>Cancer Markers Quiz</h1>
+        <div id="quiz">
+            <div class="question">
+                <p>Match each cancer type with its corresponding tumor marker:</p>
+                <div id="questions"></div>
+            </div>
+            <div class="button-group">
+                <button onclick="checkAnswers()">Check Answers</button>
+                <button class="reset" onclick="resetQuiz()">Try Again</button>
+            </div>
         </div>
-        <button onclick="checkAnswers()">Check Answers</button>
-        <button onclick="resetQuiz()">Try Again</button>
+        <div id="result"></div>
     </div>
-    <div id="result"></div>
 
     <script>
         const pairs = [
@@ -79,8 +155,8 @@
             
             pairs.forEach((pair, index) => {
                 const questionHTML = `
-                    <div>
-                        <label>${pair.cancer}:</label>
+                    <div class="question-item">
+                        <label>${pair.cancer}</label>
                         <select id="q${index}">
                             <option value="">Select marker</option>
                             ${markers.map(marker => 
@@ -114,9 +190,16 @@
             const resultDiv = document.getElementById('result');
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
-                <h3>Results:</h3>
-                <p>You got ${correct} out of ${pairs.length} correct (${percentage.toFixed(1)}%)</p>
-                <p>Keep practicing to improve your score!</p>
+                <h3>Your Results</h3>
+                <p>You got ${correct} out of ${pairs.length} correct!</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${percentage}%"></div>
+                </div>
+                <p style="text-align: center; margin-top: 10px;">Score: ${percentage.toFixed(1)}%</p>
+                ${percentage === 100 ? 
+                    '<p style="color: #48bb78; text-align: center; font-weight: bold;">Perfect score! Excellent work! 🎉</p>' : 
+                    '<p style="text-align: center;">Keep practicing to improve your score!</p>'
+                }
             `;
         }
 
